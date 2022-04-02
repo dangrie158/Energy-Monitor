@@ -1,0 +1,4 @@
+(fp_lib_table
+  (lib (name "Library")(type "KiCad")(uri "${KIPRJMOD}/Library.pretty")(options "")(descr "")(disabled))
+  (lib (name "EnergyMonitor")(type "KiCad")(uri "${KIPRJMOD}/EnergyMonitor.pretty")(options "")(descr ""))
+)
