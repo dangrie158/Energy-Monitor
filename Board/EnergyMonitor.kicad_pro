@@ -137,10 +137,7 @@
     "equivalence_files": []
   },
   "erc": {
-    "erc_exclusions": [
-      "lib_symbol_issues|977900|1612900|1bc9b7e9-d9f1-4fe3-a4a6-bcf059327b75|00000000-0000-0000-0000-000000000000",
-      "lib_symbol_issues|996950|1885950|8de48c88-e35b-49f0-b139-c406702bbc39|00000000-0000-0000-0000-000000000000"
-    ],
+    "erc_exclusions": [],
     "meta": {
       "version": 0
     },
@@ -413,7 +410,7 @@
         ],
         "pcb_color": "rgba(0, 0, 0, 0.000)",
         "schematic_color": "rgba(0, 0, 0, 0.000)",
-        "track_width": 0.254,
+        "track_width": 0.508,
         "via_diameter": 0.8,
         "via_drill": 0.4,
         "wire_width": 6.0
