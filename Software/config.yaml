@@ -1,0 +1,60 @@
+mqtt:
+  host: grafana.local
+  port: 1883
+  base_topic: energymeter/{name}/consumption
+
+# time in seconds between reads of each channel.
+sample_every: 5
+channels:
+  - name: L1
+    channel: 0
+    bits: 18
+    samples: 3 #at 18 bits we can sample with ~3 samples/s
+    aggregator: average
+    zeropoint: [0, 0]
+    fullscale: [262144, 50]
+    unit: A
+
+  - name: L2
+    channel: 1
+    bits: 18
+    samples: 3
+    aggregator: average
+    zeropoint: [0, 0]
+    fullscale: [262144, 50]
+    unit: A
+
+  - name: L3
+    channel: 2
+    bits: 18
+    samples: 3
+    aggregator: average
+    zeropoint: [0, 0]
+    fullscale: [262144, 50]
+    unit: A
+
+  - name: VRms
+    channel: 3
+    bits: 12 # with 12 bits we should get 240 samples/s so approx. 5 samples per full wave
+    samples: 240 # collect samples for 1 second to calculate rms voltage
+    aggregator: rms
+    zeropoint: [2048, 0] # half scale since we swing on the negative site
+    fullscale: [4096, 360]
+    unit: V
+
+charts:
+  - title: "Aktueller Energieverbrauch"
+    type: total_power
+    amperage_channels: [0, 1, 2]
+    voltage_channel: 3
+    display_time: 3
+  - title: "Verlauf heute"
+    type: power_history
+    amperage_channels: [0, 1, 2]
+    voltage_channel: 3
+    display_time: 3
+  - title: "Enegrieverbrauch heute"
+    type: power_history
+    amperage_channels: [0, 1, 2]
+    voltage_channel: 3
+    display_time: 3
