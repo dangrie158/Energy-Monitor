@@ -16,8 +16,9 @@ channels:
     bits: 16
     samples: 3 #at 18 bits we can sample with ~3 samples/s
     aggregator: average
-    zeropoint: [0, 0]
-    fullscale: [56535, 50]
+    calibration_points:
+      - [0, 0]
+      - [56535, 50]
     unit: A
 
   - name: L2
@@ -25,8 +26,9 @@ channels:
     bits: 16
     samples: 3
     aggregator: average
-    zeropoint: [0, 0]
-    fullscale: [56535, 50]
+    calibration_points:
+      - [0, 0]
+      - [56535, 50]
     unit: A
 
   - name: L3
@@ -34,8 +36,9 @@ channels:
     bits: 16
     samples: 3
     aggregator: average
-    zeropoint: [0, 0]
-    fullscale: [56535, 50]
+    calibration_points:
+      - [0, 0]
+      - [56535, 50]
     unit: A
 
   - name: VRms
@@ -43,8 +46,9 @@ channels:
     bits: 12 # with 12 bits we should get 240 samples/s so approx. 5 samples per full wave
     samples: 240 # collect samples for 1 second to calculate rms voltage
     aggregator: rms
-    zeropoint: [2048, 0] # half scale since we swing on the negative site
-    fullscale: [4096, 360]
+    calibration_points:
+      - [4096, 360]
+      - [2048, 0] # half scale since we swing on the negative site
     unit: V
 
 charts:

@@ -92,14 +92,17 @@ class EnergyMeter:
                 self.should_stop.wait(self.time_between_reads - read_time)
             else:
                 self.logger.warning(
-                    f"Reading took mora than {self.time_between_reads} seconds. It took {read_time} seconds"
+                    f"Reading took more than {self.time_between_reads} seconds. It took {read_time} seconds"
                 )
 
     def update_display(self):
-        oled_font = ImageFont.truetype("DejaVuSans-Bold.ttf", 14)
         with canvas(self.display) as draw:
-            draw.rectangle(self.display.bounding_box, outline="white", fill="black")
-            draw.text((10, 10), "OLED-Display", font=oled_font, fill="white")
+            self.draw_power_stats(draw)
+
+    def draw_power_stats(self, draw):
+        oled_font = ImageFont.truetype("DejaVuSans-Bold.ttf", 14)
+        draw.rectangle(self.display.bounding_box, outline="white", fill="black")
+        draw.text((10, 10), "OLED-Display", font=oled_font, fill="white")
 
     def run(self):
         self.should_stop = threading.Event()

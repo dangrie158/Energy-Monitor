@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from functools import cached_property
-from typing import Any, Callable, Dict, List, Literal, NamedTuple
+from typing import Any, Callable, Dict, List, Literal, NamedTuple, Tuple
 
 import numpy as np
 
@@ -42,9 +42,7 @@ class Channel:
     bits: Literal[12, 14, 16, 18]
 
     """x0, y0 of a line used to scale the raw ADC value to the apropriate unit"""
-    zeropoint: CalibrationPoint
-    """x1, y1 of the scaling line"""
-    fullscale: CalibrationPoint
+    calibration_points: Tuple[CalibrationPoint, CalibrationPoint]
 
     """programmable gain setting of the adc for this channel"""
     gain: Literal[1, 2, 4, 8] = 1
@@ -80,15 +78,15 @@ class Channel:
         #     y2 - y1
         # m = -------
         #     x2 - x1
-        dy = self.fullscale.y - self.zeropoint.y
-        dx = self.fullscale.x - self.zeropoint.x
+        dy = self.calibration_points[1].y - self.calibration_points[0].y
+        dx = self.calibration_points[1].x - self.calibration_points[0].x
         return dy / dx
 
     @cached_property
     def _b(self):
         # y = mx + b
         # b = y - mx
-        return self.fullscale.y - (self._m * self.fullscale.x)
+        return self.calibration_points[1].y - (self._m * self.calibration_points[1].x)
 
     def _scale_value(self, value: float) -> float:
         return self._m * value + self._b
@@ -104,19 +102,19 @@ class Channel:
         if num_bits not in (12, 14, 16, 18):
             raise ValueError(f"invalid number of bits specified for channel {name}")
 
-        zeropoint_values = config.pop("zeropoint", None)
-        if zeropoint_values is None or len(zeropoint_values) != 2:
+        calibration_point_values = config.pop("calibration_points", None)
+        if calibration_point_values is None or len(calibration_point_values) != 2:
             raise ValueError(
-                f"you need to specify a valid zero point for channel {name}"
+                f"you need to specify exactly 2 calibration points for channel {name}"
             )
-        zeropoint = CalibrationPoint(*zeropoint_values)
-
-        fullscale_values = config.pop("fullscale", None)
-        if fullscale_values is None or len(fullscale_values) != 2:
+        if any(len(point) != 2 for point in calibration_point_values):
             raise ValueError(
-                f"you need to specify a valid zero point for channel {name}"
+                "each calibration point needs an x and y value for channel {name}"
             )
-        fullscale = CalibrationPoint(*fullscale_values)
+        calibration_points = (
+            CalibrationPoint(*calibration_point_values[0]),
+            CalibrationPoint(*calibration_point_values[1]),
+        )
 
         aggregator_value = config.pop("aggregator", "average")
         if aggregator_value not in _aggregators:
@@ -126,5 +124,5 @@ class Channel:
         aggregator = _aggregators[aggregator_value]
 
         return Channel(
-            **config, zeropoint=zeropoint, fullscale=fullscale, aggregator=aggregator
+            **config, calibration_points=calibration_points, aggregator=aggregator
         )

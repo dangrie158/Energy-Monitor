@@ -53,6 +53,7 @@ class ssd1306:
 
 
 cv2.namedWindow("display", cv2.WINDOW_KEEPRATIO | cv2.WINDOW_AUTOSIZE)
+cv2.setWindowProperty("display", cv2.WND_PROP_TOPMOST, 1)
 
 
 @contextmanager
