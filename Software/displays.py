@@ -1,6 +1,6 @@
 import dataclasses
 import datetime
-from typing import List, Optional, Tuple
+from typing import List, Optional
 
 from PIL import ImageDraw, ImageFont
 
@@ -13,8 +13,17 @@ class Display:
     title: str
     display_time: int = 3
 
+    big_font = ImageFont.truetype("DejaVuSans-Bold.ttf", 25)
+    normal_font = ImageFont.truetype("DejaVuSans-Bold.ttf", 12)
+    small_font = ImageFont.truetype("DejaVuSans-Bold.ttf", 8)
+
     def draw(self, canvas: ImageDraw, statistics: EnergyStatistics):
-        return NotImplemented
+        canvas.rectangle(
+            (0, 0, canvas.im.size[0] - 1, canvas.im.size[1] - 1),
+            outline="white",
+            fill="black",
+        )
+        self.draw_centered_string(canvas, 2, self.title, self.normal_font)
 
     def draw_centered_string(
         self, canvas: ImageDraw, y: int, text: str, font: ImageFont
@@ -48,14 +57,9 @@ class Display:
 class DailyPower(Display):
     def draw(self, canvas: ImageDraw, statistics: EnergyStatistics):
         big_font = ImageFont.truetype("DejaVuSans-Bold.ttf", 25)
-        normal_font = ImageFont.truetype("DejaVuSans-Bold.ttf", 12)
         small_font = ImageFont.truetype("DejaVuSans-Bold.ttf", 8)
 
-        canvas.rectangle(
-            (0, 0, canvas.im.size[0] - 1, canvas.im.size[1] - 1),
-            outline="white",
-            fill="black",
-        )
+        super().draw(canvas, statistics)
 
         total_power = statistics.daily_power()
         unit = "Wh"
@@ -63,7 +67,6 @@ class DailyPower(Display):
             total_power /= 1000
             unit = "kWh"
         total_power_string = f"{total_power:04.2f}"
-        self.draw_centered_string(canvas, 2, self.title, normal_font)
         self.draw_centered_string(canvas, 20, total_power_string, big_font)
         self.draw_centered_string(canvas, 50, unit, small_font)
 
@@ -71,15 +74,8 @@ class DailyPower(Display):
 @dataclasses.dataclass
 class CurrentPower(Display):
     def draw(self, canvas: ImageDraw, statistics: EnergyStatistics):
-        big_font = ImageFont.truetype("DejaVuSans-Bold.ttf", 25)
-        normal_font = ImageFont.truetype("DejaVuSans-Bold.ttf", 12)
-        small_font = ImageFont.truetype("DejaVuSans-Bold.ttf", 8)
 
-        canvas.rectangle(
-            (0, 0, canvas.im.size[0] - 1, canvas.im.size[1] - 1),
-            outline="white",
-            fill="black",
-        )
+        super().draw(canvas, statistics)
 
         total_power = statistics.live_power()
         unit = "W"
@@ -87,9 +83,8 @@ class CurrentPower(Display):
             total_power /= 1000
             unit = "kW"
         total_power_string = f"{total_power:04.2f}"
-        self.draw_centered_string(canvas, 2, self.title, normal_font)
-        self.draw_centered_string(canvas, 20, total_power_string, big_font)
-        self.draw_centered_string(canvas, 50, unit, small_font)
+        self.draw_centered_string(canvas, 20, total_power_string, self.big_font)
+        self.draw_centered_string(canvas, 50, unit, self.small_font)
 
 
 @dataclasses.dataclass
@@ -97,10 +92,62 @@ class PowerHistory(Display):
     num_bins: int = 20
 
     def draw(self, canvas: ImageDraw, statistics: EnergyStatistics):
+        super().draw(canvas, statistics)
+
+        chart_padding_x = 3
+        chart_padding_y = 18
+        chart_height = 35
+        chart_width = canvas.im.size[0] - (2 * chart_padding_x)
+
         power_history = statistics.power_history(self.num_bins)
-        oled_font = ImageFont.truetype("DejaVuSans-Bold.ttf", 14)
-        canvas.rectangle(((0, 0), canvas.im.size), outline="white", fill="black")
-        canvas.text((10, 10), "OLED-Display", font=oled_font, fill="white")
+        bin_width = chart_width / self.num_bins
+
+        max_value = max(power_history)
+        if max_value == 0:
+            # we don't yet have enough data for any reasonable chart
+            self.draw_centered_string(canvas, 30, "no data", self.normal_font)
+            return
+
+        # draw the bars as solid filled rectangles
+        for bin_number, bin in enumerate(power_history):
+            bar_height = int(round((bin / max_value) * chart_height))
+            bar_start = (
+                chart_padding_x + (bin_width * bin_number) + 1,
+                chart_padding_y + (chart_height - bar_height),
+            )
+            bar_end = (
+                chart_padding_x + (bin_width * (bin_number + 1)) - 1,
+                chart_padding_y + chart_height,
+            )
+            canvas.rectangle((*bar_start, *bar_end), fill="white")
+
+        # draw with black through the bars to make them look like blocks
+        cross_line_distance = 2
+        for line_index in range(1, (chart_height // cross_line_distance) + 1):
+            line_height = (
+                chart_padding_y
+                + (cross_line_distance * line_index)
+                - (cross_line_distance // 2)
+            )
+            canvas.line(
+                (
+                    chart_padding_x,
+                    line_height,
+                    canvas.im.size[0] - chart_padding_x,
+                    line_height,
+                ),
+                fill="black",
+            )
+
+        # draw an hour-legend on the bottom marking every 4th hour
+        for hour in range(0, 24, 4):
+            label_position = (
+                chart_padding_x + (chart_width / 24 * hour),
+                chart_padding_y + chart_height + 1,
+            )
+            canvas.text(
+                label_position, f"{hour:02d}", font=self.small_font, fill="white"
+            )
 
 
 class DisplayList(List[Display]):

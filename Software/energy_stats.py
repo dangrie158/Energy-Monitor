@@ -110,14 +110,13 @@ class EnergyStatistics:
             return power_statistic.statistic / 3600
 
     def live_power(self) -> float:
+        """
+        return the live (current) power consumption in watts
+        """
         last_reading_index = self.current_reading_index - 1
-        last_interval = (
-            self.timestamps[last_reading_index]
-            - self.timestamps[last_reading_index - 1]
-        )
         last_total_current = np.sum(self.current_readings[:, last_reading_index])
         last_voltage = self.voltage_readings[last_reading_index]
-        return last_total_current * last_voltage * last_interval.astype(np.uint64)
+        return last_total_current * last_voltage
 
     def current_history(self, num_bins: int):
         with self._lock:

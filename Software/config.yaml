@@ -53,15 +53,15 @@ channels:
 
 displays:
 
+  - title: "Verlauf heute"
+    type: PowerHistory
+    num_bins: 24
+    display_time: 10
+
   - title: "Energieverbrauch"
     type: CurrentPower
-    display_time: 5
+    display_time: 10
 
   - title: "Verbrauch heute"
     type: DailyPower
-    display_time: 5
-
-  - title: "Verlauf heute"
-    type: PowerHistory
-    num_bins: 20
-    display_time: 5
+    display_time: 10

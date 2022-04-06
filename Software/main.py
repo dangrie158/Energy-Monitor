@@ -93,6 +93,11 @@ class EnergyMeter:
                 self.mqtt_client.publish(self.mqtt_topic, mqtt_payload)
 
             self.energy_statistics.add_reading(reading_map)
+            # also publish a packet for the live power currently consumed
+            live_power = self.energy_statistics.live_power() / 1000
+            mqtt_payload = f"kW,channel=power value={live_power}"
+            self.mqtt_client.publish(self.mqtt_topic, mqtt_payload)
+
             read_time = time.time() - start_read
             self.logger.info(
                 f"Sampled {len(self.channels)} channels in {read_time} seconds"
