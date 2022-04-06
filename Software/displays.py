@@ -13,9 +13,10 @@ class Display:
     title: str
     display_time: int = 3
 
-    big_font = ImageFont.truetype("DejaVuSans-Bold.ttf", 25)
-    normal_font = ImageFont.truetype("DejaVuSans-Bold.ttf", 12)
+    big_font = ImageFont.truetype("DejaVuSansMono-Bold.ttf", 25)
+    normal_font = ImageFont.truetype("DejaVuSans-Bold.ttf", 11)
     small_font = ImageFont.truetype("DejaVuSans-Bold.ttf", 8)
+    extrasmall_font = ImageFont.truetype("DejaVuSansMono.ttf", 8)
 
     def draw(self, canvas: ImageDraw, statistics: EnergyStatistics):
         canvas.rectangle(
@@ -89,7 +90,7 @@ class CurrentPower(Display):
 
 @dataclasses.dataclass
 class PowerHistory(Display):
-    num_bins: int = 20
+    num_bins: int = 24
 
     def draw(self, canvas: ImageDraw, statistics: EnergyStatistics):
         super().draw(canvas, statistics)
@@ -146,7 +147,7 @@ class PowerHistory(Display):
                 chart_padding_y + chart_height + 1,
             )
             canvas.text(
-                label_position, f"{hour:02d}", font=self.small_font, fill="white"
+                label_position, f"{hour:02d}", font=self.extrasmall_font, fill="white"
             )
 
 
