@@ -51,19 +51,17 @@ channels:
       - [2048, 0] # half scale since we swing on the negative site
     unit: V
 
-charts:
-  - title: "Aktueller Energieverbrauch"
-    type: total_power
-    amperage_channels: [0, 1, 2]
-    voltage_channel: 3
-    display_time: 3
+displays:
+
+  - title: "Energieverbrauch"
+    type: CurrentPower
+    display_time: 5
+
+  - title: "Verbrauch heute"
+    type: DailyPower
+    display_time: 5
+
   - title: "Verlauf heute"
-    type: power_history
-    amperage_channels: [0, 1, 2]
-    voltage_channel: 3
-    display_time: 3
-  - title: "Enegrieverbrauch heute"
-    type: power_history
-    amperage_channels: [0, 1, 2]
-    voltage_channel: 3
-    display_time: 3
+    type: PowerHistory
+    num_bins: 20
+    display_time: 5

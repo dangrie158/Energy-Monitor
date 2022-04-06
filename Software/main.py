@@ -1,16 +1,19 @@
 #!/usr/bin/env python3
 import argparse
 import dataclasses
+import datetime
+from functools import partial
+from inspect import ismethod
 import threading
 import logging
 import time
 from pathlib import Path
-from typing import Dict, List
+from typing import Callable, Dict, List, Tuple
 
 import yaml
-from PIL import ImageFont
 
 from aquisition import Channel
+from displays import Display, DisplayList
 from energy_stats import EnergyStatistics
 
 try:
@@ -60,6 +63,11 @@ class EnergyMeter:
             self.channels, self.time_between_reads
         )
 
+        self.display_list = DisplayList()
+        for display_config in config.get("displays", []):
+            display = Display.from_config(**display_config)
+            self.display_list.append(display)
+
     def initialize(self):
         display_port = i2c(port=1, address=self.display_address)
         self.display = ssd1306(display_port)
@@ -96,20 +104,16 @@ class EnergyMeter:
                 )
 
     def update_display(self):
-        with canvas(self.display) as draw:
-            self.draw_power_stats(draw)
+        current_display = self.display_list.get_current_display()
 
-    def draw_power_stats(self, draw):
-        oled_font = ImageFont.truetype("DejaVuSans-Bold.ttf", 14)
-        draw.rectangle(self.display.bounding_box, outline="white", fill="black")
-        draw.text((10, 10), "OLED-Display", font=oled_font, fill="white")
+        with canvas(self.display) as draw:
+            current_display.draw(canvas=draw, statistics=self.energy_statistics)
 
     def run(self):
         self.should_stop = threading.Event()
         self.should_stop.clear()
 
         reader_thread = threading.Thread(target=self.read_channels)
-
         reader_thread.start()
 
         try:
@@ -125,7 +129,6 @@ class EnergyMeter:
 
 
 if __name__ == "__main__":
-
     parser = argparse.ArgumentParser(description="Process some integers.")
     parser.add_argument(
         "--config",

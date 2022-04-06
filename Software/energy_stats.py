@@ -78,7 +78,7 @@ class EnergyStatistics:
 
             self.current_reading_index += 1
 
-    def daily_power(self):
+    def daily_power(self) -> float:
         """
         calculates the total power consumption so far in watthours
         """
@@ -87,7 +87,7 @@ class EnergyStatistics:
         # to 0 here, they are effectively ignored in the sum calculation below
 
         with self._lock:
-            return np.sum(self.power_history(num_bins=1))
+            return float(np.sum(self.power_history(num_bins=1)))
 
     def power_history(self, num_bins: int):
         """
@@ -108,6 +108,16 @@ class EnergyStatistics:
             )
 
             return power_statistic.statistic / 3600
+
+    def live_power(self) -> float:
+        last_reading_index = self.current_reading_index - 1
+        last_interval = (
+            self.timestamps[last_reading_index]
+            - self.timestamps[last_reading_index - 1]
+        )
+        last_total_current = np.sum(self.current_readings[:, last_reading_index])
+        last_voltage = self.voltage_readings[last_reading_index]
+        return last_total_current * last_voltage * last_interval.astype(np.uint64)
 
     def current_history(self, num_bins: int):
         with self._lock:
