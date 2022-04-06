@@ -5,32 +5,37 @@ mqtt:
 
 # time in seconds between reads of each channel.
 sample_every: 5
+adc_addresses:
+  - 0x68
+  - 0x68
+display_address: 0x3C
+
 channels:
   - name: L1
     channel: 0
-    bits: 18
+    bits: 16
     samples: 3 #at 18 bits we can sample with ~3 samples/s
     aggregator: average
     zeropoint: [0, 0]
-    fullscale: [262144, 50]
+    fullscale: [56535, 50]
     unit: A
 
   - name: L2
     channel: 1
-    bits: 18
+    bits: 16
     samples: 3
     aggregator: average
     zeropoint: [0, 0]
-    fullscale: [262144, 50]
+    fullscale: [56535, 50]
     unit: A
 
   - name: L3
     channel: 2
-    bits: 18
+    bits: 16
     samples: 3
     aggregator: average
     zeropoint: [0, 0]
-    fullscale: [262144, 50]
+    fullscale: [56535, 50]
     unit: A
 
   - name: VRms
