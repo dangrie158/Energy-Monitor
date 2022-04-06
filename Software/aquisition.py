@@ -64,8 +64,11 @@ class Channel:
         for _ in range(self.samples):
             samples.append(adc.read_raw(self.channel))
 
-        aggregated_value = self.aggregator(samples)
-        return self._scale_value(aggregated_value)
+        # it would be more efficient if we could scale after aggregation so we only need to transform
+        # a single value, however this does not work for rms aggregation as we need to shift
+        # to the correct y-intersect gefore transformation
+        scaled_values = [self._scale_value(value) for value in samples]
+        return self.aggregator(scaled_values)
 
     def _setup_for_reading(self, adc):
         adc.set_bit_rate(self.bits)
@@ -77,9 +80,9 @@ class Channel:
         #     y2 - y1
         # m = -------
         #     x2 - x1
-        return (self.fullscale.y - self.zeropoint.y) / (
-            self.fullscale.x - self.zeropoint.x
-        )
+        dy = self.fullscale.y - self.zeropoint.y
+        dx = self.fullscale.x - self.zeropoint.x
+        return dy / dx
 
     @cached_property
     def _b(self):
