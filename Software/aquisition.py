@@ -44,6 +44,16 @@ class Channel:
     """x0, y0 of a line used to scale the raw ADC value to the apropriate unit"""
     calibration_points: Tuple[CalibrationPoint, CalibrationPoint]
 
+    """
+    the type of channel used in statistics caluclations.
+    Channels with type current_phase are all summed up to calculate the total power
+    Channels with type voltage are used for all power calculations. Exactly one voltage
+        channel must be specified
+    Channels with type current_other can be used to track other consumers that are a part of
+        the total consumption
+    """
+    type: Literal["current_phase", "current_other", "voltage"]
+
     """programmable gain setting of the adc for this channel"""
     gain: Literal[1, 2, 4, 8] = 1
 
@@ -96,20 +106,20 @@ class Channel:
         name = config.get("name", "?")
         if "bits" not in config:
             raise ValueError(
-                f"you need to specify the number of bits for channel {name}"
+                f"You need to specify the number of bits for channel {name}"
             )
         num_bits = config.get("bits")
         if num_bits not in (12, 14, 16, 18):
-            raise ValueError(f"invalid number of bits specified for channel {name}")
+            raise ValueError(f"Invalid number of bits specified for channel {name}")
 
         calibration_point_values = config.pop("calibration_points", None)
         if calibration_point_values is None or len(calibration_point_values) != 2:
             raise ValueError(
-                f"you need to specify exactly 2 calibration points for channel {name}"
+                f"You need to specify exactly 2 calibration points for channel {name}"
             )
         if any(len(point) != 2 for point in calibration_point_values):
             raise ValueError(
-                "each calibration point needs an x and y value for channel {name}"
+                f"Each calibration point needs an x and y value for channel {name}"
             )
         calibration_points = (
             CalibrationPoint(*calibration_point_values[0]),
@@ -119,9 +129,13 @@ class Channel:
         aggregator_value = config.pop("aggregator", "average")
         if aggregator_value not in _aggregators:
             raise ValueError(
-                f"the channel aggregator needs to be one of {_aggregators.keys()}"
+                f"The channel aggregator needs to be one of {_aggregators.keys()}"
             )
         aggregator = _aggregators[aggregator_value]
+
+        channel_type = config.get("type")
+        if config.get("type") not in ("current_phase", "current_other", "voltage"):
+            raise ValueError(f"unknown channel type: {channel_type} for channel {name}")
 
         return Channel(
             **config, calibration_points=calibration_points, aggregator=aggregator

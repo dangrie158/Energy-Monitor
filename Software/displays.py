@@ -12,6 +12,7 @@ class Display:
 
     title: str
     display_time: int = 3
+    channel_name: Optional[str] = None
 
     big_font = ImageFont.truetype("DejaVuSansMono-Bold.ttf", 25)
     normal_font = ImageFont.truetype("DejaVuSans-Bold.ttf", 11)
@@ -62,7 +63,7 @@ class DailyPower(Display):
 
         super().draw(canvas, statistics)
 
-        total_power = statistics.daily_power()
+        total_power = statistics.daily_power(self.channel_name)
         unit = "Wh"
         if total_power > 9999:
             total_power /= 1000
@@ -75,10 +76,9 @@ class DailyPower(Display):
 @dataclasses.dataclass
 class CurrentPower(Display):
     def draw(self, canvas: ImageDraw, statistics: EnergyStatistics):
-
         super().draw(canvas, statistics)
 
-        total_power = statistics.live_power()
+        total_power = statistics.live_power(self.channel_name)
         unit = "W"
         if total_power > 9999:
             total_power /= 1000
@@ -100,7 +100,7 @@ class PowerHistory(Display):
         chart_height = 35
         chart_width = canvas.im.size[0] - (2 * chart_padding_x)
 
-        power_history = statistics.power_history(self.num_bins)
+        power_history = statistics.power_history(self.num_bins, self.channel_name)
         bin_width = chart_width / self.num_bins
 
         max_value = max(power_history)

@@ -20,6 +20,7 @@ channels:
       - [0, 0]
       - [56535, 50]
     unit: A
+    type: current_phase
 
   - name: L2
     channel: 2
@@ -30,6 +31,7 @@ channels:
       - [0, 0]
       - [56535, 50]
     unit: A
+    type: current_phase
 
   - name: L3
     channel: 3
@@ -40,6 +42,7 @@ channels:
       - [0, 0]
       - [56535, 50]
     unit: A
+    type: current_phase
 
   - name: VRms
     channel: 4
@@ -50,18 +53,63 @@ channels:
       - [4096, 360]
       - [2048, 0] # half scale since we swing on the negative site
     unit: V
+    type: voltage
+
+
+  - name: Wohnzimmer
+    channel: 5
+    bits: 12
+    samples: 3
+    aggregator: average
+    calibration_points:
+      - [0, 0]
+      - [4096, 50]
+    unit: A
+    type: current_other
+
+  - name: Schlafzimmer
+    channel: 5
+    bits: 12
+    samples: 3
+    aggregator: average
+    calibration_points:
+      - [0, 0]
+      - [4096, 50]
+    unit: A
+    type: current_other
 
 displays:
-
-  - title: "Verlauf heute"
+  - title: Verlauf heute
     type: PowerHistory
     num_bins: 24
     display_time: 10
 
-  - title: "Energieverbrauch"
+  - title: Energieverbrauch
     type: CurrentPower
     display_time: 10
 
-  - title: "Verbrauch heute"
+  - title: Verbrauch heute
     type: DailyPower
     display_time: 10
+
+  - title: Schlafzimmer
+    type: PowerHistory
+    num_bins: 24
+    display_time: 10
+    channel_name: Schlafzimmer
+
+  - title: Schlaftimmer
+    type: DailyPower
+    display_time: 5
+    channel_name: Schlafzimmer
+
+  - title: Wohnzimmer
+    type: PowerHistory
+    num_bins: 24
+    display_time: 10
+    channel_name: Wohnzimmer
+
+  - title: Wohnzimmer
+    type: DailyPower
+    display_time: 5
+    channel_name: Wohnzimmer
