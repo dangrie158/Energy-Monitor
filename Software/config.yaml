@@ -12,7 +12,7 @@ display_address: 0x3C
 
 channels:
   - name: L1
-    channel: 0
+    channel: 1
     bits: 16
     samples: 3 #at 18 bits we can sample with ~3 samples/s
     aggregator: average
@@ -21,15 +21,6 @@ channels:
     unit: A
 
   - name: L2
-    channel: 1
-    bits: 16
-    samples: 3
-    aggregator: average
-    zeropoint: [0, 0]
-    fullscale: [56535, 50]
-    unit: A
-
-  - name: L3
     channel: 2
     bits: 16
     samples: 3
@@ -38,8 +29,17 @@ channels:
     fullscale: [56535, 50]
     unit: A
 
-  - name: VRms
+  - name: L3
     channel: 3
+    bits: 16
+    samples: 3
+    aggregator: average
+    zeropoint: [0, 0]
+    fullscale: [56535, 50]
+    unit: A
+
+  - name: VRms
+    channel: 4
     bits: 12 # with 12 bits we should get 240 samples/s so approx. 5 samples per full wave
     samples: 240 # collect samples for 1 second to calculate rms voltage
     aggregator: rms
