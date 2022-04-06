@@ -86,9 +86,11 @@ class EnergyMeter:
                 self.logger.debug(
                     f"new measurement from channel {channel.name}: \t{channel_value:2.3f} {channel.unit}"
                 )
-                mqtt_channel = self.mqtt_topic.format(**dataclasses.asdict(channel))
                 reading_map[channel] = channel_value
-                self.mqtt_client.publish(mqtt_channel, channel_value)
+                mqtt_payload = (
+                    f"{channel.unit},channel={channel.name} value={channel_value}"
+                )
+                self.mqtt_client.publish(self.mqtt_topic, mqtt_payload)
 
             self.energy_statistics.add_reading(reading_map)
             read_time = time.time() - start_read

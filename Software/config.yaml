@@ -1,7 +1,7 @@
 mqtt:
   host: grafana.local
   port: 1883
-  base_topic: energymeter/{name}/consumption
+  base_topic: energymeter
 
 # time in seconds between reads of each channel.
 sample_every: 5
