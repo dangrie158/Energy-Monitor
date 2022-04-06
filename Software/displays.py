@@ -1,6 +1,6 @@
 import dataclasses
 import datetime
-from typing import List, Tuple
+from typing import List, Optional, Tuple
 
 from PIL import ImageDraw, ImageFont
 
@@ -105,7 +105,7 @@ class PowerHistory(Display):
 
 class DisplayList(List[Display]):
     _current_index = 0
-    _current_display_active_since: datetime.datetime | None = None
+    _current_display_active_since: Optional[datetime.datetime] = None
 
     def get_current_display(self):
         if len(self) == 0:
