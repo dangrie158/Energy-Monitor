@@ -1,0 +1,18 @@
+[Unit]
+Description=Energy Monitoring Service
+After=syslog.target
+
+[Service]
+Type=simple
+User=pi
+Group=pi
+WorkingDirectory=/home/pi/Energy-Monitor/Software/
+ExecStart=/home/pi/Energy-Monitor/Software/main.py --config=/home/pi/Energy-Monitor/Software/config.yaml -v
+SyslogIdentifier=energymonitor
+StandardOutput=syslog
+StandardError=syslog
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target
