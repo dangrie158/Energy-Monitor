@@ -17,7 +17,7 @@ class Display:
     big_font = ImageFont.truetype("DejaVuSansMono-Bold.ttf", 25)
     normal_font = ImageFont.truetype("DejaVuSans-Bold.ttf", 11)
     small_font = ImageFont.truetype("DejaVuSans-Bold.ttf", 8)
-    extrasmall_font = ImageFont.truetype("DejaVuSansMono.ttf", 8)
+    extrasmall_font = ImageFont.truetype("DejaVuSans.ttf", 8)
 
     def draw(self, canvas: ImageDraw, statistics: EnergyStatistics):
         canvas.rectangle(

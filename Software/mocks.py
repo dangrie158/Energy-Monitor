@@ -60,9 +60,14 @@ cv2.setWindowProperty("display", cv2.WND_PROP_TOPMOST, 1)
 def canvas(display: ssd1306):
     _image = Image.new("RGB", display.size, (0, 255, 0))
     yield ImageDraw.Draw(_image)
+    _image = _image.resize(
+        (display.size[0] * 2, display.size[1] * 2), resample=Image.NEAREST
+    )
     cv2.imshow(
         "display",
-        np.asarray(_image.getdata()).reshape((64, 128, 3)).astype(np.uint8),
+        np.asarray(_image.getdata())
+        .reshape((display.size[1] * 2, display.size[0] * 2, 3))
+        .astype(np.uint8),
     )
     cv2.waitKey(1)
 
