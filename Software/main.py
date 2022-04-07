@@ -8,7 +8,7 @@ import threading
 import logging
 import time
 from pathlib import Path
-from typing import Callable, Dict, List, Tuple
+from typing import Callable, Dict, List, Optional, Tuple
 
 import yaml
 
@@ -31,6 +31,7 @@ except ImportError:
 
 class EnergyMeter:
     logger = logging.getLogger("EnergyMeter")
+    reader_thread: Optional[threading.Thread] = None
 
     def load_config(self, config_path: str):
         self.logger.debug(f"reading config from: {config_path}")
@@ -116,23 +117,28 @@ class EnergyMeter:
         with canvas(self.display) as draw:
             current_display.draw(canvas=draw, statistics=self.energy_statistics)
 
+    def supervise_reader_thread(self):
+        """
+        make sure the reader thread exists and is running
+        """
+        if self.reader_thread is None or not self.reader_thread.is_alive():
+            self.reader_thread = threading.Thread(target=self.read_channels)
+            self.reader_thread.start()
+
     def run(self):
         self.should_stop = threading.Event()
         self.should_stop.clear()
 
-        reader_thread = threading.Thread(target=self.read_channels)
-        reader_thread.start()
-
         try:
             while not self.should_stop.is_set():
+                self.supervise_reader_thread()
                 self.update_display()
                 # update the display with 1 fps max
                 self.should_stop.wait(1)
         except KeyboardInterrupt:
             logging.info("shutdown signal received, stopping threads...")
             self.should_stop.set()
-
-        reader_thread.join()
+            self.reader_thread.join()
 
 
 if __name__ == "__main__":

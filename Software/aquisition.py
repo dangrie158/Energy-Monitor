@@ -76,7 +76,7 @@ class Channel:
         # a single value, however this does not work for rms aggregation as we need to shift
         # to the correct y-intersect gefore transformation
         scaled_values = [self._scale_value(value) for value in samples]
-        return self.aggregator(scaled_values)
+        return self.aggregator(scaled_values)  # type: ignore # known isue in mypy. see: https://github.com/python/mypy/issues/5485
 
     def _setup_for_reading(self, adc):
         adc.set_bit_rate(self.bits)
