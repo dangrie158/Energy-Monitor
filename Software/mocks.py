@@ -1,11 +1,11 @@
 from contextlib import contextmanager
-from logging import getLogger
 import time
-from threading import Lock, current_thread, main_thread
+from threading import Thread, Event
+from typing import Optional
 
 import cv2
 import numpy as np
-from PIL import Image, ImageDraw, ImageTk
+from PIL import Image, ImageDraw
 
 
 class DummyAdc:
@@ -77,9 +77,30 @@ import logging
 
 class MQTTClient:
     logger = logging.getLogger("MQTT Client")
+    worker_thread: Optional[Thread] = None
 
     def connect(self, host: str, port: int):
         pass
 
     def publish(self, topic: str, payload: str):
         self.logger.debug(f"publishing message with topic {topic}: {payload}")
+
+    def loop(self):
+        while not self._thread_terminate.is_set():
+            time.sleep(1)
+
+    def loop_start(self):
+        if self.worker_thread is not None:
+            raise AssertionError("Loop already running")
+
+        self._thread_terminate = Event()
+        self.worker_thread = Thread(target=self.loop)
+        self.worker_thread.start()
+
+    def loop_stop(self):
+        if self.worker_thread is None or not self.worker_thread.is_alive():
+            raise AssertionError("Loop is not running")
+
+        self._thread_terminate.set()
+        self.worker_thread.join()
+        self.worker_thread = None

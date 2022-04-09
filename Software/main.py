@@ -77,6 +77,7 @@ class EnergyMeter:
 
         self.mqtt_client = MQTTClient()
         self.mqtt_client.connect(self.mqtt_host, self.mqtt_port)
+        self.mqtt_client.loop_start()
 
     def read_channels(self):
         while not self.should_stop.is_set():
@@ -138,6 +139,7 @@ class EnergyMeter:
         except KeyboardInterrupt:
             logging.info("shutdown signal received, stopping threads...")
             self.should_stop.set()
+            self.mqtt_client.loop_stop()
             self.reader_thread.join()
 
 
