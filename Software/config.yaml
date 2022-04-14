@@ -18,7 +18,7 @@ channels:
     aggregator: average
     calibration_points:
       - [0, 0]
-      - [56535, 50]
+      - [15038, 9.35]
     unit: A
     type: current_phase
 
@@ -29,7 +29,7 @@ channels:
     aggregator: average
     calibration_points:
       - [0, 0]
-      - [56535, 50]
+      - [15038, 9.35]
     unit: A
     type: current_phase
 
@@ -40,7 +40,7 @@ channels:
     aggregator: average
     calibration_points:
       - [0, 0]
-      - [56535, 50]
+      - [15038, 9.35]
     unit: A
     type: current_phase
 
