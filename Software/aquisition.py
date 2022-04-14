@@ -4,6 +4,8 @@ from typing import Any, Callable, Dict, List, Literal, NamedTuple, Tuple
 
 import numpy as np
 
+DUMMY_CHANNEL = -1
+
 Aggregator = Callable[
     [
         List[float],
@@ -66,7 +68,13 @@ class Channel:
     """A human readable string specifying the unit the scaled value is in"""
     unit: str = ""
 
+    """If the channel is a mock channel (channel number == -1) then return this value"""
+    static_value: float = float("nan")
+
     def read(self, adc) -> float:
+        if self.channel == DUMMY_CHANNEL:
+            return self.static_value
+
         samples = []
         self._setup_for_reading(adc)
         for _ in range(self.samples):
