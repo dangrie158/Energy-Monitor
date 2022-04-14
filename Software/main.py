@@ -8,7 +8,7 @@ import threading
 import logging
 import time
 from pathlib import Path
-from typing import Callable, Dict, List, Optional, Tuple
+from typing import Callable, Dict, List, NamedTuple, Optional, Tuple
 
 import yaml
 
@@ -29,6 +29,17 @@ except ImportError:
     from mocks import MQTTClient  # type: ignore
 
 
+class MqttMessagePayload(NamedTuple):
+    name: str
+    value: float
+    unit: str
+
+
+class MqttMessageTemplate(NamedTuple):
+    topic: str
+    payload: str
+
+
 class EnergyMeter:
     logger = logging.getLogger("EnergyMeter")
     reader_thread: Optional[threading.Thread] = None
@@ -43,10 +54,15 @@ class EnergyMeter:
         try:
             self.mqtt_host = config["mqtt"]["host"]
             self.mqtt_port = config["mqtt"]["port"]
-            self.mqtt_topic = config["mqtt"]["base_topic"]
         except KeyError:
             raise AttributeError(
                 f"you need to specify mqtt host and port in the config file"
+            )
+
+        self.mqtt_message_templates: List[MqttMessageTemplate] = []
+        for message_config in config["mqtt"]["messages"]:
+            self.mqtt_message_templates.append(
+                MqttMessageTemplate(message_config["topic"], message_config["payload"])
             )
 
         self.adc_addresses = config.get("adc_addresses", [0x68, 0x69])
@@ -89,16 +105,17 @@ class EnergyMeter:
                     f"new measurement from channel {channel.name}: \t{channel_value:2.3f} {channel.unit}"
                 )
                 reading_map[channel] = channel_value
-                mqtt_payload = (
-                    f"{channel.unit},channel={channel.name} value={channel_value}"
+
+                reading_message = MqttMessagePayload(
+                    channel.name, channel_value, channel.unit
                 )
-                self.mqtt_client.publish(self.mqtt_topic, mqtt_payload)
+                self.publish_mqtt_messages(reading_message)
 
             self.energy_statistics.add_reading(reading_map)
             # also publish a packet for the live power currently consumed
             live_power = self.energy_statistics.live_power() / 1000
-            mqtt_payload = f"kW,channel=power value={live_power}"
-            self.mqtt_client.publish(self.mqtt_topic, mqtt_payload)
+            power_message = MqttMessagePayload("total_power", live_power, "kWh")
+            self.publish_mqtt_messages(power_message)
 
             read_time = time.time() - start_read
             self.logger.info(
@@ -111,6 +128,12 @@ class EnergyMeter:
                 self.logger.warning(
                     f"Reading took more than {self.time_between_reads} seconds. It took {read_time} seconds"
                 )
+
+    def publish_mqtt_messages(self, measurement: MqttMessagePayload):
+        for template in self.mqtt_message_templates:
+            mqtt_topic = template.topic.format(**measurement._asdict())
+            mqtt_payload = template.payload.format(**measurement._asdict())
+            self.mqtt_client.publish(mqtt_topic, mqtt_payload)
 
     def update_display(self):
         current_display = self.display_list.get_current_display()

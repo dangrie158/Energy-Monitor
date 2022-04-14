@@ -1,7 +1,11 @@
 mqtt:
   host: grafana.local
   port: 1883
-  base_topic: energymeter
+  messages:
+    - topic: "energymeter"
+      payload: "{unit},channel={name} value={value}"
+    - topic: "energymeter/{name}"
+      payload: "{value}"
 
 # time in seconds between reads of each channel.
 sample_every: 5
@@ -45,7 +49,8 @@ channels:
     type: current_phase
 
   - name: VRms
-    channel: 4
+    channel: -1
+    static_value: 239
     bits: 12 # with 12 bits we should get 240 samples/s so approx. 5 samples per full wave
     samples: 240 # collect samples for 1 second to calculate rms voltage
     aggregator: rms
