@@ -114,13 +114,13 @@ class EnergyMeter:
             self.energy_statistics.add_reading(reading_map)
 
             # also publish a packet for the live power currently consumed
-            live_power = self.energy_statistics.live_power() / 1000
-            power_message = MqttMessagePayload("live_consumption", live_power, "kW")
+            live_power = self.energy_statistics.live_power()
+            power_message = MqttMessagePayload("live_consumption", live_power, "W")
             self.publish_mqtt_messages(power_message)
 
             # also publish a packet for the daily power consumption
-            daily_power = self.energy_statistics.daily_power() / 1000
-            power_message = MqttMessagePayload("daily_consumption", daily_power, "kWh")
+            daily_power = self.energy_statistics.daily_power()
+            power_message = MqttMessagePayload("daily_consumption", daily_power, "Wh")
             self.publish_mqtt_messages(power_message)
 
             read_time = time.time() - start_read
