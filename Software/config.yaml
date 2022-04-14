@@ -79,10 +79,15 @@ channels:
     type: current_other
 
 displays:
+
   - title: Verlauf heute
     type: PowerHistory
     num_bins: 24
     display_time: 10
+
+  - title: Netzspannung
+    type: CurrentVoltage
+    display_time: 5
 
   - title: Energieverbrauch
     type: CurrentPower

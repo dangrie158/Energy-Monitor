@@ -89,6 +89,18 @@ class CurrentPower(Display):
 
 
 @dataclasses.dataclass
+class CurrentVoltage(Display):
+    def draw(self, canvas: ImageDraw, statistics: EnergyStatistics):
+        super().draw(canvas, statistics)
+
+        live_voltage = statistics.live_voltage()
+        unit = "V"
+        live_voltage_string = f"{live_voltage:04.2f}"
+        self.draw_centered_string(canvas, 20, live_voltage_string, self.big_font)
+        self.draw_centered_string(canvas, 50, unit, self.small_font)
+
+
+@dataclasses.dataclass
 class PowerHistory(Display):
     num_bins: int = 24
 

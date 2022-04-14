@@ -149,6 +149,14 @@ class EnergyStatistics:
         last_voltage = self.voltage_readings[last_reading_index]
         return last_total_current * last_voltage
 
+    def live_voltage(self) -> float:
+        """
+        return the live (current) voltage in Vrms
+        """
+        last_reading_index = self.current_reading_index - 1
+        last_voltage = self.voltage_readings[last_reading_index]
+        return last_voltage
+
     def current_history(self, num_bins: int):
         with self._lock:
             current_statistics = stats.binned_statistic(
