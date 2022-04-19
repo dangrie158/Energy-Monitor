@@ -11,7 +11,7 @@ mqtt:
 sample_every: 5
 adc_addresses:
   - 0x68
-  - 0x68
+  - 0x69
 display_address: 0x3C
 
 channels:
@@ -22,7 +22,7 @@ channels:
     aggregator: average
     calibration_points:
       - [0, 0]
-      - [15038, 9.35]
+      - [4307, 9.31]
     unit: A
     type: current_phase
 
@@ -33,7 +33,7 @@ channels:
     aggregator: average
     calibration_points:
       - [0, 0]
-      - [15038, 9.35]
+      - [4307, 9.31]
     unit: A
     type: current_phase
 
@@ -44,44 +44,43 @@ channels:
     aggregator: average
     calibration_points:
       - [0, 0]
-      - [15038, 9.35]
+      - [4307, 9.31]
     unit: A
     type: current_phase
 
   - name: VRms
-    channel: -1
-    static_value: 239
-    bits: 12 # with 12 bits we should get 240 samples/s so approx. 5 samples per full wave
-    samples: 240 # collect samples for 1 second to calculate rms voltage
+    channel: 8
+    bits: 14 # with 14 bits we should get 60 samples/s so we avoid always samling at the same time at 50 hZ
+    samples: 120 # collect samples for 1 second to calculate rms voltage
     aggregator: rms
     calibration_points:
-      - [4096, 360]
-      - [2048, 0] # half scale since we swing on the negative site
+      - [2048, 332]
+      - [1024, 0] # half scale since we swing on the negative site
     unit: V
     type: voltage
 
 
-  - name: Wohnzimmer
-    channel: 5
-    bits: 12
-    samples: 3
-    aggregator: average
-    calibration_points:
-      - [0, 0]
-      - [4096, 50]
-    unit: A
-    type: current_other
+  # - name: Wohnzimmer
+  #   channel: 5
+  #   bits: 12
+  #   samples: 3
+  #   aggregator: average
+  #   calibration_points:
+  #     - [0, 0]
+  #     - [4096, 50]
+  #   unit: A
+  #   type: current_other
 
-  - name: Schlafzimmer
-    channel: 5
-    bits: 12
-    samples: 3
-    aggregator: average
-    calibration_points:
-      - [0, 0]
-      - [4096, 50]
-    unit: A
-    type: current_other
+  # - name: Schlafzimmer
+  #   channel: 5
+  #   bits: 12
+  #   samples: 3
+  #   aggregator: average
+  #   calibration_points:
+  #     - [0, 0]
+  #     - [4096, 50]
+  #   unit: A
+  #   type: current_other
 
 displays:
 
@@ -102,24 +101,24 @@ displays:
     type: DailyPower
     display_time: 10
 
-  - title: Schlafzimmer
-    type: PowerHistory
-    num_bins: 24
-    display_time: 10
-    channel_name: Schlafzimmer
+  # - title: Schlafzimmer
+  #   type: PowerHistory
+  #   num_bins: 24
+  #   display_time: 10
+  #   channel_name: Schlafzimmer
 
-  - title: Schlaftimmer
-    type: DailyPower
-    display_time: 5
-    channel_name: Schlafzimmer
+  # - title: Schlaftimmer
+  #   type: DailyPower
+  #   display_time: 5
+  #   channel_name: Schlafzimmer
 
-  - title: Wohnzimmer
-    type: PowerHistory
-    num_bins: 24
-    display_time: 10
-    channel_name: Wohnzimmer
+  # - title: Wohnzimmer
+  #   type: PowerHistory
+  #   num_bins: 24
+  #   display_time: 10
+  #   channel_name: Wohnzimmer
 
-  - title: Wohnzimmer
-    type: DailyPower
-    display_time: 5
-    channel_name: Wohnzimmer
+  # - title: Wohnzimmer
+  #   type: DailyPower
+  #   display_time: 5
+  #   channel_name: Wohnzimmer
