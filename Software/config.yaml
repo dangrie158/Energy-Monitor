@@ -50,8 +50,8 @@ channels:
 
   - name: VRms
     channel: 8
-    bits: 14 # with 14 bits we should get 60 samples/s so we avoid always samling at the same time at 50 hZ
-    samples: 120 # collect samples for 1 second to calculate rms voltage
+    bits: 12 # with 14 bits we should get 60 samples/s so we avoid always samling at the same time at 50 hZ
+    samples: 240 # collect samples for 1 second to calculate rms voltage
     aggregator: rms
     calibration_points:
       - [2048, 332]
