@@ -61,7 +61,7 @@ channels:
 
 
   - name: Wohnzimmer
-    channel: 5
+    channel: 4
     bits: 16
     samples: 3
     aggregator: average
@@ -77,13 +77,12 @@ channels:
     samples: 3
     aggregator: average
     calibration_points:
-      - [0, 0]
+      - [205, 0]
       - [2153, 9.31]
     unit: A
     type: current_other
 
 displays:
-
   - title: Verlauf heute
     type: PowerHistory
     num_bins: 24
