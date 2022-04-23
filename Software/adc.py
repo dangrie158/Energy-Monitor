@@ -131,7 +131,7 @@ class ADC:
         sign_bit_position = self.__bitrate - 1
         value = 0
         for byte in range(num_bytes):
-            if byte == 0:
+            if byte == 0 and (self.__bitrate % 8) != 0:
                 # mask the unused bits in the most significant byte
                 adc_reading[byte] &= (2 ** (self.__bitrate % 8)) - 1
 
