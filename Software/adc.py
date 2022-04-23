@@ -1,10 +1,10 @@
 # Loosely based on the ABElectronics ADC Pi 8-Channel ADC module
-
+import math
 from enum import IntEnum, auto
 from typing import Literal
-from smbus2 import SMBus
-
 import time
+
+from smbus2 import SMBus
 
 
 class ConversionMode(IntEnum):
@@ -113,8 +113,11 @@ class ADC:
 
         # keep reading the adc data until the conversion result is ready
         adc_reading = [0, 0, 0]
+        num_bytes = math.ceil(self.__bitrate / 8)
         while True:
-            *adc_reading, cmd_byte = self.__bus.read_i2c_block_data(address, config, 4)
+            *adc_reading, cmd_byte = self.__bus.read_i2c_block_data(
+                address, config, num_bytes + 1
+            )
             # check if bit 7 of the command byte is 0.
             if (cmd_byte & (1 << 7)) == 0:
                 break
@@ -124,31 +127,21 @@ class ADC:
                 # yield execution for a bit
                 time.sleep(0.00001)
 
-        raw = 0
+        # convert the 2-s complement binary value to a python integer
+        sign_bit_position = self.__bitrate - 1
+        value = 0
+        for byte in range(num_bytes):
+            if byte == 0:
+                # mask the unused bits in the most significant byte
+                adc_reading[byte] &= (2 ** (self.__bitrate % 8)) - 1
 
-        if self.__bitrate == 18:
-            raw = (
-                ((adc_reading[0] & 0x03) << 16) | (adc_reading[1] << 8) | adc_reading[2]
-            )
-            signbit = bool(raw & (1 << 17))
-            raw = raw & ~(1 << 17)
+            value |= adc_reading[byte] << (8 * ((num_bytes - byte) - 1))
 
-        elif self.__bitrate == 16:
-            raw = (adc_reading[0] << 8) | adc_reading[1]
-            signbit = bool(raw & (1 << 15))
-            raw = raw & ~(1 << 15)
+        sign_bit = bool(value & (1 << sign_bit_position))
 
-        elif self.__bitrate == 14:
-            raw = ((adc_reading[0] & 0b00111111) << 8) | adc_reading[1]
-            signbit = bool(raw & (1 << 13))
-            raw = raw & ~(1 << 13)
+        if sign_bit:
+            # clear the sign bit and calculate the complement
+            value = value & ~(1 << sign_bit_position)
+            value = value - (2**sign_bit_position)
 
-        elif self.__bitrate == 12:
-            raw = ((adc_reading[0] & 0x0F) << 8) | adc_reading[1]
-            signbit = bool(raw & (1 << 11))
-            raw = raw & ~(1 << 11)
-
-        if signbit:
-            raw *= -1
-
-        return raw
+        return value
