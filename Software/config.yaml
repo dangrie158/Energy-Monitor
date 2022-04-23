@@ -77,7 +77,7 @@ channels:
     samples: 3
     aggregator: average
     calibration_points:
-      - [205, 0]
+      - [-50, 0]
       - [2153, 9.31]
     unit: A
     type: current_other
