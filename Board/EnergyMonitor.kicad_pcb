@@ -2832,7 +2832,7 @@
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp 6a3f7144-558f-4a3c-a5c5-c74bbe8cbaf0)
     )
-    (fp_text value "100k" (at 0 1.82) (layer "F.Fab")
+    (fp_text value "DNP" (at 0 1.82) (layer "F.Fab")
       (effects (font (size 1 1) (thickness 0.15)))
       (tstamp 185aac17-96a7-4ac3-861d-d0b921c4b0ba)
     )
