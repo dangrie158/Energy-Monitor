@@ -1,14 +1,10 @@
 #!/usr/bin/env python3
 import argparse
-import dataclasses
-import datetime
-from functools import partial
-from inspect import ismethod
 import threading
 import logging
 import time
 from pathlib import Path
-from typing import Callable, Dict, List, NamedTuple, Optional, Tuple
+from typing import Dict, List, NamedTuple, Optional
 
 import yaml
 
@@ -17,12 +13,12 @@ from displays import Display, DisplayList
 from energy_stats import EnergyStatistics
 
 try:
-    from adc import ADCPi as ADC
+    from adc import ADC
     from luma.core.interface.serial import i2c
     from luma.core.render import canvas
     from luma.oled.device import ssd1306
     from paho.mqtt.client import Client as MQTTClient
-except ImportError:
+except (ImportError, ModuleNotFoundError):
     logging.getLogger().warning("Running in MOCKING MODE without real hardware access")
     from mocks import DummyAdc as ADC  # type: ignore
     from mocks import i2c, canvas, ssd1306  # type: ignore

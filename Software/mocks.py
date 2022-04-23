@@ -9,14 +9,12 @@ from PIL import Image, ImageDraw
 
 
 class DummyAdc:
+
+    gain: int = 0
+    bitrate: int = 18
+
     def __init__(self, addr1, addr2, bits=18):
-        self.set_bit_rate(bits)
-
-    def set_bit_rate(self, bitrate):
-        self.bitrate = bitrate
-
-    def set_pga(self, pga):
-        self.pga = pga
+        self.bitrate = bits
 
     def read_raw(self, channel):
         if self.bitrate == 16:

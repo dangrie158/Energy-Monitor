@@ -76,7 +76,10 @@ class Channel:
             return self.static_value
 
         samples = []
-        self._setup_for_reading(adc)
+
+        adc.bitrate = self.bits
+        adc.gain = self.gain
+
         for _ in range(self.samples):
             samples.append(adc.read_raw(self.channel))
 
@@ -85,10 +88,6 @@ class Channel:
         # to the correct y-intersect gefore transformation
         scaled_values = [self._scale_value(value) for value in samples]
         return self.aggregator(scaled_values)  # type: ignore # known isue in mypy. see: https://github.com/python/mypy/issues/5485
-
-    def _setup_for_reading(self, adc):
-        adc.set_bit_rate(self.bits)
-        adc.set_pga(self.gain)
 
     @cached_property
     def _m(self):
