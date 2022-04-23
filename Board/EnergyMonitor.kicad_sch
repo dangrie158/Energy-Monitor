@@ -6014,7 +6014,7 @@
     (property "Reference" "R3" (id 0) (at 68.58 91.44 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
-    (property "Value" "100k" (id 1) (at 68.58 93.98 0)
+    (property "Value" "" (id 1) (at 68.58 93.98 0)
       (effects (font (size 1.27 1.27)) (justify left))
     )
     (property "Footprint" "Resistor_SMD:R_1206_3216Metric_Pad1.30x1.75mm_HandSolder" (id 2) (at 67.31 92.71 0)
@@ -7342,7 +7342,7 @@
       (reference "R2") (unit 1) (value "6k8") (footprint "Resistor_SMD:R_1206_3216Metric_Pad1.30x1.75mm_HandSolder")
     )
     (path "/7eab9a7a-fd09-439e-8a57-83e9bd802247"
-      (reference "R3") (unit 1) (value "100k") (footprint "Resistor_SMD:R_1206_3216Metric_Pad1.30x1.75mm_HandSolder")
+      (reference "R3") (unit 1) (value "DNP") (footprint "Resistor_SMD:R_1206_3216Metric_Pad1.30x1.75mm_HandSolder")
     )
     (path "/d1373e4c-a9af-4baa-ae56-bd386b97bef2"
       (reference "R4") (unit 1) (value "100k") (footprint "Resistor_SMD:R_1206_3216Metric_Pad1.30x1.75mm_HandSolder")
