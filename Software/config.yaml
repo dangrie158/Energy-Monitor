@@ -54,40 +54,40 @@ channels:
     samples: 240 # collect samples for 1 second to calculate rms voltage
     aggregator: rms
     calibration_points:
-      - [2048, 332]
-      - [1024, 0] # half scale since we swing on the negative site
+      - [52, 0] # slight offset as a measurment artifact
+      - [400, 330]
     unit: V
     type: voltage
 
 
-  # - name: Wohnzimmer
-  #   channel: 5
-  #   bits: 12
-  #   samples: 3
-  #   aggregator: average
-  #   calibration_points:
-  #     - [0, 0]
-  #     - [4096, 50]
-  #   unit: A
-  #   type: current_other
+  - name: Wohnzimmer
+    channel: 5
+    bits: 16
+    samples: 3
+    aggregator: average
+    calibration_points:
+      - [0, 0]
+      - [4307, 9.31]
+    unit: A
+    type: current_other
 
-  # - name: Schlafzimmer
-  #   channel: 5
-  #   bits: 12
-  #   samples: 3
-  #   aggregator: average
-  #   calibration_points:
-  #     - [0, 0]
-  #     - [4096, 50]
-  #   unit: A
-  #   type: current_other
+  - name: Durchlauferhitzer
+    channel: 5
+    bits: 16
+    samples: 3
+    aggregator: average
+    calibration_points:
+      - [0, 0]
+      - [2153, 9.31]
+    unit: A
+    type: current_other
 
 displays:
 
   - title: Verlauf heute
     type: PowerHistory
     num_bins: 24
-    display_time: 10
+    display_time: 5
 
   - title: Netzspannung
     type: CurrentVoltage
@@ -101,24 +101,13 @@ displays:
     type: DailyPower
     display_time: 10
 
-  # - title: Schlafzimmer
-  #   type: PowerHistory
-  #   num_bins: 24
-  #   display_time: 10
-  #   channel_name: Schlafzimmer
+  - title: Warmwasser
+    type: PowerHistory
+    num_bins: 24
+    display_time: 5
+    channel_name: Durchlauferhitzer
 
-  # - title: Schlaftimmer
-  #   type: DailyPower
-  #   display_time: 5
-  #   channel_name: Schlafzimmer
-
-  # - title: Wohnzimmer
-  #   type: PowerHistory
-  #   num_bins: 24
-  #   display_time: 10
-  #   channel_name: Wohnzimmer
-
-  # - title: Wohnzimmer
-  #   type: DailyPower
-  #   display_time: 5
-  #   channel_name: Wohnzimmer
+  - title: Warmwasser
+    type: DailyPower
+    display_time: 5
+    channel_name: Durchlauferhitzer
